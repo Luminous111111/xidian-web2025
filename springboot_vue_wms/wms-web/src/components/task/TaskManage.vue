@@ -71,6 +71,7 @@
           >
             <el-button slot="reference" size="small" type="danger">删除</el-button>
           </el-popconfirm>
+            <el-button size="small" type="info" @click="viewDetail(scope.row.id)" style="margin-left: 5px;">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -317,6 +318,9 @@ export default {
       this.searchStatus = "";
       this.searchAssignee = "";
       this.loadTasks();
+    },
+    viewDetail(id) {
+      this.$router.push({ name: 'TaskDetail', query: { id: id } });
     }
   },
   mounted() {
