@@ -79,4 +79,14 @@ public class TaskController {
         return Result.suc(result.getRecords(),result.getTotal());
     }
 
+    @GetMapping("/detail")
+    public Result getTaskDetail(@RequestParam Long id) {
+        Task task = taskService.getById(id);
+        if (task != null) {
+            return Result.suc(task);
+        } else {
+            return Result.fail("任务不存在");
+        }
+    }
+
 }
