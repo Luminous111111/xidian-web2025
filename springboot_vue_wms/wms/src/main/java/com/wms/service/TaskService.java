@@ -15,5 +15,5 @@ import com.wms.entity.User;
  * @since 2025-05-08
  */
 public interface TaskService extends IService<Task> {
-    IPage pageCC(IPage<Task> page, Wrapper wrapper);
+    IPage<Task> pageCC(IPage<Task> page, Wrapper<Task> wrapper);
 }
