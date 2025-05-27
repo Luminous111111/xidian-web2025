@@ -38,6 +38,12 @@ public class UserController {
     public List<User> list(){
         return userService.list();
     }
+
+    @GetMapping("/listAll")
+    public Result listAll(){
+        return Result.suc(userService.list());
+    }
+
     @GetMapping("/findByNo")
     public Result findByNo(@RequestParam String no){
         List list = userService.lambdaQuery().eq(User::getNo,no).list();

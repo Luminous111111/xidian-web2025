@@ -210,6 +210,8 @@ export default {
       this.$axios.get(this.$httpUrl + "/user/listAll").then(res => res.data).then(res => {
         if (res.code === 200) {
           this.userList = res.data;
+        } else {
+          this.$message.error(res);
         }
       });
     },
