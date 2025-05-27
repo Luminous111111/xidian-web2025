@@ -1,6 +1,9 @@
 
 import VueRouter from 'vue-router';
-
+import Vue from 'vue';
+import TaskManage from '../components/task/TaskManage.vue';
+import TaskDetail from '../components/task/TaskDetail.vue';
+Vue.use(VueRouter);
 const routes = [
     {
         path:'/',
@@ -20,6 +23,16 @@ const routes = [
                 },
                 component:()=>import('../components/Home')
             },
+            {
+                path: '/task/manage',
+                name: 'TaskManage',
+                component: TaskManage
+            },
+            {
+                path: '/task/detail',
+                name: 'TaskDetail',
+                component: TaskDetail
+            }
             /*{
                 path:'/Admin',
                 name:'admin',
