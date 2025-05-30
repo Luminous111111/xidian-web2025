@@ -185,4 +185,18 @@ public class UserController {
 
         return Result.suc(result.getRecords(),result.getTotal());
     }
+
+    //查询用户name
+    @GetMapping("/get-name/{userId}")
+    public Result getUserName(@PathVariable Integer userId) {
+        User user = userService.getById(userId);
+        if (user != null) {
+            return Result.suc(user.getName()); // 返回用户名
+        } else {
+            return Result.fail("用户不存在");
+        }
+    }
+
+
+
 }

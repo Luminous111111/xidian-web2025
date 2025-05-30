@@ -9,17 +9,30 @@
 
     <!-- 这里可以添加图表组件，例如使用 ECharts -->
     <div id="task-chart" style="width: 600px; height: 400px;"></div>
+
+    <CommentList v-if="taskId" :task-id="taskId" ref="commentList" />
+    <CommentForm :task-id="taskId" @comment-added="refreshComments" />
+
   </div>
 </template>
 
 <script>
 import echarts from 'echarts';
+import CommentForm from "@/components/task/CommentForm.vue";
+import CommentList from "@/components/task/CommentList.vue";
 
 export default {
+
+  components: {
+    CommentList,
+    CommentForm  // 注册组件
+  },
+
   name: "TaskDetail",
   data() {
     return {
-      task: {},
+      task: null,
+      taskId:null,
       creatorName: '',
       assigneeName: '',
       statusOptions: [
@@ -60,11 +73,22 @@ export default {
         ]
       };
       myChart.setOption(option);
-    }
+    },
+
+    /*onCommentAdded() {
+      // 这里可以重新获取评论列表数据，更新页面显示
+      this.fetchComments();
+    },*/
+
+      refreshComments() {
+        this.$refs.commentList.fetchComments(); // 刷新评论列表
+      }
+
+
   },
   mounted() {
-    const taskId = this.$route.query.id;
-    this.$axios.get(this.$httpUrl + "/task/detail?id=" + taskId).then(res => res.data).then(res => {
+    this.taskId = String(this.$route.query.id);
+    this.$axios.get(this.$httpUrl + "/task/detail?id=" + this.taskId).then(res => res.data).then(res => {
       if (res.code === 200) {
         this.task = res.data;
         // 获取创建人和被分配人姓名，这里假设后端有对应的接口

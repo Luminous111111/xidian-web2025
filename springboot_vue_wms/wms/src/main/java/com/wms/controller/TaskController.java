@@ -4,15 +4,20 @@ package com.wms.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.common.QueryPageParam;
 import com.wms.common.Result;
 import com.wms.entity.Task;
+import com.wms.entity.TaskComment;
+import com.wms.entity.TaskCommentRequest;
+import com.wms.service.TaskCommentService;
 import com.wms.service.TaskService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 /**
@@ -29,6 +34,10 @@ public class TaskController {
     //新增
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TaskCommentService taskCommentService;
+
     @PostMapping("/save")
     public Result save(@RequestBody Task task){
         return taskService.save(task)?Result.suc():Result.fail();
@@ -85,8 +94,41 @@ public class TaskController {
         if (task != null) {
             return Result.suc(task);
         } else {
-            return Result.fail("任务不存在");
+            return Result.fail();
         }
     }
+
+    @PostMapping("/{taskId}/comments")
+        public Result addComment(@PathVariable Long taskId,
+                                 @RequestBody TaskCommentRequest commentRequest) {
+        try {
+            Task task = taskService.getById(taskId);
+            if (task == null) {
+                return Result.fail("没有相关任务");
+            }
+            return taskCommentService.createComment(taskId, commentRequest);
+        } catch (Exception e) {
+            return Result.fail("添加评论失败，请稍后再试");
+        }
+    }
+
+    @GetMapping("/{taskId}/listcomments")
+    public Result listComments(@PathVariable Long taskId,
+                               @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                               @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        try {
+            Task task = taskService.getById(taskId);
+            if (task == null) {
+                return Result.fail("没有相关任务");
+            }
+
+            return taskCommentService.getCommentsByTaskId(taskId, pageNum, pageSize);
+        } catch (Exception e) {
+            return Result.fail("获取评论列表失败");
+        }
+    }
+
+
+
 
 }
