@@ -14,6 +14,7 @@ import com.wms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,6 +39,12 @@ public class UserController {
     public List<User> list(){
         return userService.list();
     }
+
+    @GetMapping("/listAll")
+    public Result listAll(){
+        return Result.suc(userService.list());
+    }
+
     @GetMapping("/findByNo")
     public Result findByNo(@RequestParam String no){
         List list = userService.lambdaQuery().eq(User::getNo,no).list();

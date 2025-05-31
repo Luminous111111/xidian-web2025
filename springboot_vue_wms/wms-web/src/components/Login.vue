@@ -55,8 +55,7 @@
                             if(res.code==200){
                                 //存储
                                 sessionStorage.setItem("CurUser",JSON.stringify(res.data.user))
-
-                                console.log(res.data.menu)
+                                // 存储完整菜单
                                 this.$store.commit("setMenu",res.data.menu)
                                 //跳转到主页
                                 this.$router.replace('/Index');

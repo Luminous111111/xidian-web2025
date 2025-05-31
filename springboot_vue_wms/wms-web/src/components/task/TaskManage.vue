@@ -210,6 +210,8 @@ export default {
       this.$axios.get(this.$httpUrl + "/user/listAll").then(res => res.data).then(res => {
         if (res.code === 200) {
           this.userList = res.data;
+        } else {
+          this.$message.error(res);
         }
       });
     },
@@ -253,8 +255,8 @@ export default {
         title: row.title,
         description: row.description,
         status: row.status,
-        creator_id: row.creator_id,
-        assignee_id: row.assignee_id,
+        creator_id: row.creator_id || row.creatorId, // 兼容两种风格
+        assignee_id: row.assignee_id || row.assigneeId, // 兼容两种风格
         deadline: row.deadline
       };
       this.dialogVisible = true;
@@ -265,9 +267,16 @@ export default {
         if (!valid) return;
         // 新增
         if (!this.form.id) {
-          // creator_id 应为当前登录用户id，这里假设有 this.$store.state.user.id
-          this.form.creator_id = this.$store?.state?.user?.id || 1; // 1为演示用
-          this.$axios.post(this.$httpUrl + "/task/save", this.form).then(res => res.data).then(res => {
+          this.form.creator_id = JSON.parse(sessionStorage.getItem('CurUser')).id;
+          // 转换字段为驼峰
+          const submitForm = {
+            ...this.form,
+            creatorId: this.form.creator_id,
+            assigneeId: this.form.assignee_id
+          };
+          delete submitForm.creator_id;
+          delete submitForm.assignee_id;
+          this.$axios.post(this.$httpUrl + "/task/save", submitForm).then(res => res.data).then(res => {
             if (res.code === 200) {
               this.$message.success("新增成功！");
               this.dialogVisible = false;
@@ -278,7 +287,14 @@ export default {
           });
         } else {
           // 编辑
-          this.$axios.post(this.$httpUrl + "/task/update", this.form).then(res => res.data).then(res => {
+          const submitForm = {
+            ...this.form,
+            creatorId: this.form.creator_id,
+            assigneeId: this.form.assignee_id
+          };
+          delete submitForm.creator_id;
+          delete submitForm.assignee_id;
+          this.$axios.post(this.$httpUrl + "/task/update", submitForm).then(res => res.data).then(res => {
             if (res.code === 200) {
               this.$message.success("修改成功！");
               this.dialogVisible = false;
@@ -327,5 +343,4 @@ export default {
 </script>
 
 <style scoped>
-/* 可根据需要自定义样式 */
 </style>
